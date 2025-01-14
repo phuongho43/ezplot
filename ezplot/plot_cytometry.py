@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from fluoressential.style import PALETTE, STYLE_LARGE
 from natsort import natsorted
+
+from ezplot.style import PALETTE, STYLE
 
 
 def load_fc_data(fcs_fp):
@@ -31,7 +32,7 @@ def process_fc_data(save_fp, data_dp):
     return y_df
 
 
-def plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel, figsize=(32, 16), palette=PALETTE, rc_params=STYLE_LARGE):
+def plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel, figsize=(32, 16), palette=PALETTE, rc_params=STYLE):
     fig_fp = Path(fig_fp)
     fig_fp.parent.mkdir(parents=True, exist_ok=True)
     with sns.axes_style("whitegrid"), mpl.rc_context(rc_params):
@@ -97,7 +98,7 @@ def main():
     xlabel = "Fluorescence (AU)"
     fig_fp = "/home/phuong/data/phd-project/figures/fig_4b.png"
     gateline = 3e3
-    plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel, figsize=(32, 16), palette=palette, rc_params=STYLE_LARGE)
+    plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel, figsize=(32, 16), palette=palette)
 
 
 if __name__ == "__main__":

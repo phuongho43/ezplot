@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from fluoressential.style import PALETTE, STYLE, STYLE_LARGE
+
+from ezplot.style import PALETTE, STYLE
 
 
 def plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp=None, xlabel="Time", ylabel="AU", figsize=(24, 16), palette=PALETTE, rc_params=STYLE):
@@ -63,7 +64,7 @@ def main():
     # xlabel = "Time (s)"
     # ylabel = r"$\mathbf{\Delta F/F_{0}}$"
     # palette = ["#34495E", "#2ECC71", "#D143A4"]
-    # plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette, rc_params=STYLE_LARGE)
+    # plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette)
 
     # fig_fp = "/home/phuong/data/phd-project/figures/fig_2f.png"
     # y_csv_fps = [
@@ -80,7 +81,7 @@ def main():
     # xlabel = "Time (s)"
     # ylabel = r"$\mathbf{\Delta F/F_{0}}$"
     # palette = ["#34495E", "#2ECC71", "#D143A4"]
-    # plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette, rc_params=STYLE_LARGE)
+    # plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette)
 
     # fig_fp = "/home/phuong/data/phd-project/figures/fig_2i.png"
     # y_csv_fps = [
@@ -93,7 +94,7 @@ def main():
     # xlabel = "Time (s)"
     # ylabel = r"$\mathbf{\Delta F/F_{0}}$"
     # palette = ["#EA822C"]
-    # plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette, rc_params=STYLE_LARGE)
+    # plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette)
 
     fig_fp = "/home/phuong/data/phd-project/figures/fig_4f.png"
     y_csv_fps = [
@@ -112,7 +113,7 @@ def main():
     xlabel = "Time (d)"
     ylabel = "Total Flux (p/s)"
     palette = ["#8069EC", "#EA822C", "#8069EC", "#EA822C"]
-    plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette, rc_params=STYLE_LARGE)
+    plot_dynamics(fig_fp, y_csv_fps, group_labels, u_csv_fp, xlabel=xlabel, ylabel=ylabel, palette=palette)
 
 
 if __name__ == "__main__":

@@ -4,10 +4,11 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from fluoressential.style import PALETTE, STYLE_LARGE
+
+from ezplot.style import PALETTE, STYLE
 
 
-def plot_groups(fig_fp, y_csv_fp, group_labels, ylabel, log2_yaxis=False, palette=PALETTE, figsize=(24, 16), rc_params=STYLE_LARGE):
+def plot_groups(fig_fp, y_csv_fp, group_labels, ylabel, log2_yaxis=False, palette=PALETTE, figsize=(24, 16), rc_params=STYLE):
     fig_fp = Path(fig_fp)
     fig_fp.parent.mkdir(parents=True, exist_ok=True)
     with sns.axes_style("whitegrid"), mpl.rc_context(rc_params):
@@ -53,7 +54,7 @@ def plot_groups(fig_fp, y_csv_fp, group_labels, ylabel, log2_yaxis=False, palett
     plt.close("all")
 
 
-def plot_class_groups(fig_fp, y_csv_fp, class_labels, group_labels, xlabel, ylabel, palette=PALETTE, figsize=(24, 16), rc_params=STYLE_LARGE):
+def plot_class_groups(fig_fp, y_csv_fp, class_labels, group_labels, xlabel, ylabel, palette=PALETTE, figsize=(24, 16), rc_params=STYLE):
     fig_fp = Path(fig_fp)
     fig_fp.parent.mkdir(parents=True, exist_ok=True)
     with sns.axes_style("whitegrid"), mpl.rc_context(rc_params):
@@ -120,7 +121,7 @@ def main():
     # ave_dense = ave_regimes_df.loc[(ave_regimes_df["group"] == 2), ["response"]]
     # print(sp.stats.ttest_ind(ave_none, ave_sparse))
     # print(sp.stats.ttest_ind(ave_sparse, ave_dense))
-    # plot_groups(fig_fp, y_csv_fp, group_labels, ylabel=ylabel, palette=palette, rc_params=STYLE_LARGE)
+    # plot_groups(fig_fp, y_csv_fp, group_labels, ylabel=ylabel, palette=palette)
 
     # fig_fp = "/home/phuong/data/phd-project/figures/fig_3b.png"
     # y_csv_fp = "/home/phuong/data/phd-project/2--expression/0--HEK-BL-intensity/results/y.csv"
