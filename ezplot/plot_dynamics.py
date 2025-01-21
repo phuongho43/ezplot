@@ -2,6 +2,7 @@ from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 
 from ezplot.process import combine_csv
@@ -49,80 +50,74 @@ def plot_dynamics(fig_fp, y_df, group_labels, xlabel="Time", ylabel="Response", 
 
 
 def main():
-    # fig_fp = "/home/phuong/data/phd-project/figures/fig_2c.png"
-    # y_csv_fps = [
-    #     "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/y.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/1--LOV/0--I427V/results/y.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/1--LOV/1--V416I/results/y.csv",
-    # ]
-    # y_df = combine_csv(y_csv_fps, 'g')
-    # group_labels = [
-    #     "ddFP",
-    #     "LOVfast",
-    #     "LOVslow",
-    # ]
-    # u_csv_fps = [
-    #     "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/u.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/1--LOV/0--I427V/results/u.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/1--LOV/1--V416I/results/u.csv",
-    # ]
-    # u_df = combine_csv(u_csv_fps, 'g')
-    # u_df = u_df.groupby("t", as_index=False)["u"].mean()
-    # xlabel = "Time (s)"
-    # ylabel = r"$\mathbf{\Delta F/F_{0}}$"
-    # palette = ["#34495E", "#2ECC71", "#D143A4"]
-    # plot_dynamics(fig_fp, y_df, group_labels, xlabel=xlabel, ylabel=ylabel, u_df=u_df, figsize=(24, 16), palette=palette)
-
-    # fig_fp = "/home/phuong/data/phd-project/figures/fig_2f.png"
-    # y_csv_fps = [
-    #     "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/y.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/3--LID/0--I427V/results/y.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/3--LID/1--V416I/results/y.csv",
-    # ]
-    # y_df = combine_csv(y_csv_fps, 'g')
-    # group_labels = [
-    #     "ddFP",
-    #     "LIDfast",
-    #     "LIDslow",
-    # ]
-    # u_csv_fps = [
-    #     "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/u.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/3--LID/0--I427V/results/u.csv",
-    #     "/home/phuong/data/phd-project/1--biosensor/3--LID/1--V416I/results/u.csv",
-    # ]
-    # u_df = combine_csv(u_csv_fps, 'g')
-    # u_df = u_df.groupby("t", as_index=False)["u"].mean()
-    # xlabel = "Time (s)"
-    # ylabel = r"$\mathbf{\Delta F/F_{0}}$"
-    # palette = ["#34495E", "#2ECC71", "#D143A4"]
-    # plot_dynamics(fig_fp, y_df, group_labels, xlabel=xlabel, ylabel=ylabel, u_df=u_df, figsize=(24, 16), palette=palette)
-
-    # fig_fp = "/home/phuong/data/phd-project/figures/fig_2i.png"
-    # y_csv_fps = [
-    #     "/home/phuong/data/phd-project/1--biosensor/5--sparser/results/y.csv"
-    # ]
-    # y_df = combine_csv(y_csv_fps, 'g')
-    # group_labels = [
-    #     "Sparse\nDecoder",
-    # ]
-    # u_csv_fps = [
-    #     "/home/phuong/data/phd-project/1--biosensor/5--sparser/results/u.csv"
-    # ]
-    # u_df = combine_csv(u_csv_fps, 'g')
-    # u_df = u_df.groupby("t", as_index=False)["u"].mean()
-    # xlabel = "Time (s)"
-    # ylabel = r"$\mathbf{\Delta F/F_{0}}$"
-    # palette = ["#EA822C"]
-    # plot_dynamics(fig_fp, y_df, group_labels, xlabel=xlabel, ylabel=ylabel, u_df=u_df, figsize=(24, 16), palette=palette)
-
-    fig_fp = "/home/phuong/data/phd-project/figures/fig_4f.png"
+    ## Figure 2C ##
+    fig_fp = "/home/phuong/data/phd-project/figures/fig_2c.png"
     y_csv_fps = [
-        "/home/phuong/data/phd-project/3--antigen/2--mouse-expt/0.csv",
-        "/home/phuong/data/phd-project/3--antigen/2--mouse-expt/1.csv",
-        "/home/phuong/data/phd-project/3--antigen/2--mouse-expt/2.csv",
-        "/home/phuong/data/phd-project/3--antigen/2--mouse-expt/3.csv",
+        "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/y.csv",
+        "/home/phuong/data/phd-project/1--biosensor/1--LOV/0--I427V/results/y.csv",
+        "/home/phuong/data/phd-project/1--biosensor/1--LOV/1--V416I/results/y.csv",
     ]
     y_df = combine_csv(y_csv_fps, "g")
+    group_labels = [
+        "ddFP",
+        "LOVfast",
+        "LOVslow",
+    ]
+    u_csv_fps = [
+        "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/u.csv",
+        "/home/phuong/data/phd-project/1--biosensor/1--LOV/0--I427V/results/u.csv",
+        "/home/phuong/data/phd-project/1--biosensor/1--LOV/1--V416I/results/u.csv",
+    ]
+    u_df = combine_csv(u_csv_fps, "g")
+    u_df = u_df.groupby("t", as_index=False)["u"].mean()
+    xlabel = "Time (s)"
+    ylabel = r"$\mathbf{\Delta F/F_{0}}$"
+    palette = ["#34495E", "#2ECC71", "#D143A4"]
+    plot_dynamics(fig_fp, y_df, group_labels, xlabel=xlabel, ylabel=ylabel, u_df=u_df, figsize=(24, 16), palette=palette)
+
+    ## Figure 2F ##
+    fig_fp = "/home/phuong/data/phd-project/figures/fig_2f.png"
+    y_csv_fps = [
+        "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/y.csv",
+        "/home/phuong/data/phd-project/1--biosensor/3--LID/0--I427V/results/y.csv",
+        "/home/phuong/data/phd-project/1--biosensor/3--LID/1--V416I/results/y.csv",
+    ]
+    y_df = combine_csv(y_csv_fps, "g")
+    group_labels = [
+        "ddFP",
+        "LIDfast",
+        "LIDslow",
+    ]
+    u_csv_fps = [
+        "/home/phuong/data/phd-project/1--biosensor/0--ddFP/results/u.csv",
+        "/home/phuong/data/phd-project/1--biosensor/3--LID/0--I427V/results/u.csv",
+        "/home/phuong/data/phd-project/1--biosensor/3--LID/1--V416I/results/u.csv",
+    ]
+    u_df = combine_csv(u_csv_fps, "g")
+    u_df = u_df.groupby("t", as_index=False)["u"].mean()
+    xlabel = "Time (s)"
+    ylabel = r"$\mathbf{\Delta F/F_{0}}$"
+    palette = ["#34495E", "#2ECC71", "#D143A4"]
+    plot_dynamics(fig_fp, y_df, group_labels, xlabel=xlabel, ylabel=ylabel, u_df=u_df, figsize=(24, 16), palette=palette)
+
+    ## Figure 2I ##
+    fig_fp = "/home/phuong/data/phd-project/figures/fig_2i.png"
+    y_csv_fps = ["/home/phuong/data/phd-project/1--biosensor/5--sparser/results/y.csv"]
+    y_df = combine_csv(y_csv_fps, "g")
+    group_labels = [
+        "Sparse\nDecoder",
+    ]
+    u_csv_fps = ["/home/phuong/data/phd-project/1--biosensor/5--sparser/results/u.csv"]
+    u_df = combine_csv(u_csv_fps, "g")
+    u_df = u_df.groupby("t", as_index=False)["u"].mean()
+    xlabel = "Time (s)"
+    ylabel = r"$\mathbf{\Delta F/F_{0}}$"
+    palette = ["#EA822C"]
+    plot_dynamics(fig_fp, y_df, group_labels, xlabel=xlabel, ylabel=ylabel, u_df=u_df, figsize=(24, 16), palette=palette)
+
+    ## Figure 4F ##
+    fig_fp = "/home/phuong/data/phd-project/figures/fig_4f.png"
+    y_df = pd.read_csv("/home/phuong/data/phd-project/3--antigen/2--mouse-expt/y.csv")
     group_labels = [
         "Dense-CD19 (Dense Input)",
         "Sparse-PSMA (Dense Input)",

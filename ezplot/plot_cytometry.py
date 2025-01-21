@@ -3,9 +3,9 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import seaborn as sns
 
+from ezplot.process import combine_rcg, load_fcs
 from ezplot.style import PALETTE, STYLE
 
 
@@ -54,13 +54,10 @@ def plot_fc_hist(fig_fp, y_df, gateline, class_labels, group_labels, xlabel, fig
 
 
 def main():
-    # save_csv_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.csv"
-    # data_dp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/data/"
-    # combine_rcg(data_dp, load_fnc=load_fcs, load_fnc_kwargs={"channel": "FL4_A"}, save_csv_fp=save_csv_fp)
-
+    ## Figure 4B ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_4b.png"
-    y_csv_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.csv"
-    y_df = pd.read_csv(y_csv_fp)
+    data_dp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/data/"
+    y_df = combine_rcg(data_dp, load_fnc=load_fcs, load_fnc_kwargs={"channel": "FL4_A"})
     group_labels = [
         "Plain K562",
         "Constitutive",
