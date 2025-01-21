@@ -30,9 +30,9 @@ dependencies = [
 Repository = "https://github.com/phuongho43/ezplot"
 
 [project.scripts]
-plot_dynamics = "fluoressential.plot_dynamics:main"
-plot_groups = "fluoressential.plot_groups:main"
-plot_cytometry = "fluoressential.plot_cytometry:main"
+plot_dynamics = "ezplot.plot_dynamics:main"
+plot_groups = "ezplot.plot_groups:main"
+plot_cytometry = "ezplot.plot_cytometry:main"
 
 [dependency-groups]
 dev = [

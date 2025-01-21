@@ -1,35 +1,13 @@
 from pathlib import Path
 
-import fcsparser
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from natsort import natsorted
 
+from ezplot.process import combine_rcg, load_fcs
 from ezplot.style import PALETTE, STYLE
-
-
-def load_fc_data(fcs_fp):
-    meta, data = fcsparser.parse(fcs_fp, meta_data_only=False, reformat_meta=True)
-    return data
-
-
-def process_fc_data(save_fp, data_dp):
-    y_df = pd.DataFrame()
-    for r, repeat_dp in enumerate(natsorted(Path(data_dp).glob("*"))):
-        for c, class_dp in enumerate(natsorted(Path(repeat_dp).glob("*"))):
-            for g, fcs_fp in enumerate(natsorted(Path(class_dp).glob("*"))):
-                fc_data = load_fc_data(fcs_fp)
-                y_col = fc_data["FL4_A"].values
-                r_col = np.ones_like(y_col) * r
-                c_col = np.ones_like(y_col) * c
-                g_col = np.ones_like(y_col) * g
-                y_df_i = pd.DataFrame({"repeat": r_col, "class": c_col, "group": g_col, "response": y_col})
-                y_df = pd.concat([y_df, y_df_i])
-    y_df.to_csv(Path(save_fp), index=False)
-    return y_df
 
 
 def plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel, figsize=(32, 16), palette=PALETTE, rc_params=STYLE):
@@ -86,19 +64,19 @@ def plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel,
 
 
 def main():
-    # save_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.csv"
-    # data_dp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/data/"
-    # process_fc_data(save_fp, data_dp)
+    save_csv_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.csv"
+    data_dp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/data/"
+    combine_rcg(data_dp, load_fnc=load_fcs, load_fnc_kwargs={"channel": "FL4_A"}, save_csv_fp=save_csv_fp)
 
-    fig_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.png"
-    y_csv_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.csv"
-    group_labels = [r"$\mathdefault{Plain\ K562}$", r"$\mathdefault{Constitutive}$", r"$\mathdefault{None\ Input}$", r"$\mathdefault{Sparse\ Input}$", r"$\mathdefault{Dense\ Input}$"]
-    class_labels = [r"$\alpha$-CD19 AF647", r"$\alpha$-PSMA APC"]
-    palette = ["#8069EC", "#EA822C"]
-    xlabel = "Fluorescence (AU)"
-    fig_fp = "/home/phuong/data/phd-project/figures/fig_4b.png"
-    gateline = 3e3
-    plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel, figsize=(32, 16), palette=palette)
+    # fig_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.png"
+    # y_csv_fp = "/home/phuong/data/phd-project/3--antigen/0--K562-fc-staining/y.csv"
+    # group_labels = [r"$\mathdefault{Plain\ K562}$", r"$\mathdefault{Constitutive}$", r"$\mathdefault{None\ Input}$", r"$\mathdefault{Sparse\ Input}$", r"$\mathdefault{Dense\ Input}$"]
+    # class_labels = [r"$\alpha$-CD19 AF647", r"$\alpha$-PSMA APC"]
+    # palette = ["#8069EC", "#EA822C"]
+    # xlabel = "Fluorescence (AU)"
+    # fig_fp = "/home/phuong/data/phd-project/figures/fig_4b.png"
+    # gateline = 3e3
+    # plot_fc_hist(fig_fp, y_csv_fp, gateline, class_labels, group_labels, xlabel, figsize=(32, 16), palette=palette)
 
 
 if __name__ == "__main__":
