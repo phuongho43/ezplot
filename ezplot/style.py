@@ -7,6 +7,7 @@ STYLE = {
     "lines.markeredgecolor": "#212121",
     "lines.markeredgewidth": 2,
     "text.color": "#212121",
+    "font.size": 64,
     "axes.spines.top": False,
     "axes.spines.right": False,
     "axes.labelsize": 96,

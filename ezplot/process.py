@@ -40,3 +40,23 @@ def combine_rcg(data_dp, load_fnc, load_fnc_kwargs=None, save_csv_fp=None):
     if save_csv_fp is not None:
         dfs.to_csv(save_csv_fp, index=False)
     return dfs
+
+
+def calc_tspan_aves(rty_df, tspans):
+    aves_df = []
+    for g, [t1, t2] in enumerate(tspans):
+        ave_df = rty_df.loc[(rty_df["t"] >= t1) & (rty_df["t"] < t2), ["r", "y"]].copy()
+        ave_df = ave_df.groupby("r", as_index=False)["y"].mean()
+        ave_df["g"] = np.ones_like(ave_df["y"]) * g
+        aves_df.append(ave_df)
+    aves_df = pd.concat(aves_df)
+    aves_df.rename(columns={"r": "repeat", "y": "response", "g": "group"}, inplace=True)
+    return aves_df
+
+
+def calc_log2_ratio(rcgy_df):
+    for c in rcgy_df["class"].unique():
+        for r in rcgy_df["repeat"].unique():
+            yi = rcgy_df.loc[(rcgy_df["class"] == c) & (rcgy_df["repeat"] == r), "response"]
+            yi = np.log2(yi / yi.iloc[0])
+    return rcgy_df
