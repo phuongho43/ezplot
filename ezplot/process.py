@@ -54,9 +54,9 @@ def calc_tspan_aves(rty_df, tspans):
     return aves_df
 
 
-def calc_log2_ratio(rcgy_df):
+def calc_log2_norm(rcgy_df):
     for c in rcgy_df["class"].unique():
         for r in rcgy_df["repeat"].unique():
-            yi = rcgy_df.loc[(rcgy_df["class"] == c) & (rcgy_df["repeat"] == r), "response"]
-            yi = np.log2(yi / yi.iloc[0])
+            ygi = rcgy_df.loc[(rcgy_df["class"] == c) & (rcgy_df["repeat"] == r), "response"]
+            rcgy_df.loc[(rcgy_df["class"] == c) & (rcgy_df["repeat"] == r), "response"] = np.log2(ygi / ygi.iloc[0])
     return rcgy_df
