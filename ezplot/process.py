@@ -6,16 +6,23 @@ import pandas as pd
 from natsort import natsorted
 
 
-def combine_csv(i_csv_fps, new_col, save_csv_fp=None):
-    dfs = []
-    for i, i_csv_fp in enumerate(i_csv_fps):
-        i_df = pd.read_csv(i_csv_fp)
-        i_df[new_col] = np.ones(len(i_df), dtype=int) * i
-        dfs.append(i_df)
-    dfs = pd.concat(dfs)
-    if save_csv_fp is not None:
-        dfs.to_csv(save_csv_fp, index=False)
-    return dfs
+def convert_u_ta_tb(tt, u_csv_fp):
+    u_df = pd.read_csv(u_csv_fp)
+    u_ta = np.round(u_df["ta"].values, 1)
+    u_tb = np.round(u_df["tb"].values, 1)
+    tt = np.arange(tt[0], tt[-1], 0.1)
+    tt = np.round(tt, 1)
+    uu = np.zeros_like(tt)
+    for ta, tb in zip(u_ta, u_tb):
+        if ta > tt[-1]:
+            continue
+        if tb > tt[-1]:
+            tb = tt[-1]
+        ia = np.where(tt == ta)[0][0]
+        ib = np.where(tt == tb)[0][0]
+        uu[ia:ib] = 1.0
+    u_df = pd.DataFrame({"t": tt, "u": uu})
+    return u_df
 
 
 def load_fcs(fcs_fp, channel=None):
@@ -40,18 +47,6 @@ def combine_rcg(data_dp, load_fnc, load_fnc_kwargs=None, save_csv_fp=None):
     if save_csv_fp is not None:
         dfs.to_csv(save_csv_fp, index=False)
     return dfs
-
-
-def calc_tspan_aves(rty_df, tspans):
-    aves_df = []
-    for g, [t1, t2] in enumerate(tspans):
-        ave_df = rty_df.loc[(rty_df["t"] >= t1) & (rty_df["t"] < t2), ["r", "y"]].copy()
-        ave_df = ave_df.groupby("r", as_index=False)["y"].mean()
-        ave_df["g"] = np.ones_like(ave_df["y"]) * g
-        aves_df.append(ave_df)
-    aves_df = pd.concat(aves_df)
-    aves_df.rename(columns={"r": "repeat", "y": "response", "g": "group"}, inplace=True)
-    return aves_df
 
 
 def calc_log2_norm(rcgy_df):

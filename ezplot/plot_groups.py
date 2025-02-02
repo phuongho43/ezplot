@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import scipy as sp
 import seaborn as sns
+from natsort import natsorted
 
-from ezplot.process import calc_log2_norm, calc_tspan_aves
 from ezplot.style import PALETTE, STYLE
 
 
@@ -45,7 +45,7 @@ def draw_sigdiff(ax, df, cg1, cg2):
     ax.text(xm, y + dy / 2, text, ha="center", va=va, zorder=10.2)
 
 
-def plot_rcgy(fig_fp, rcgy_df, xlabel, ylabel, group_labels, class_labels=None, sigdiff_cgs=None, palette=PALETTE, rc_params=STYLE, figsize=(24, 16), leg_loc="best"):
+def plot_cgry(fig_fp, rcgy_df, xlabel, ylabel, group_labels, class_labels=None, sigdiff_cgs=None, palette=PALETTE, rc_params=STYLE, figsize=(24, 16), leg_loc="best"):
     fig_fp = Path(fig_fp)
     fig_fp.parent.mkdir(parents=True, exist_ok=True)
     with sns.axes_style("whitegrid"), mpl.rc_context(rc_params):
@@ -106,11 +106,21 @@ def plot_rcgy(fig_fp, rcgy_df, xlabel, ylabel, group_labels, class_labels=None, 
 def main():
     ## Figure 2J ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_2j.png"
-    y_csv_fp = "/home/phuong/data/phd-project/1--biosensor/5--sparser/results/y.csv"
-    rty_df = pd.read_csv(y_csv_fp)
+    expt_dp = "/home/phuong/data/phd-project/1--biosensor/5--decoder/"
     tspans = [[0, 60], [60, 120], [120, 155]]
-    aves_df = calc_tspan_aves(rty_df, tspans=tspans)
-    aves_df["class"] = np.zeros(len(aves_df))
+    data = []
+    for c, class_dp in enumerate([class_dp for class_dp in natsorted(Path(expt_dp).glob("*")) if class_dp.is_dir()]):
+        for r, rep_dp in enumerate([rep_dp for rep_dp in natsorted(class_dp.glob("*")) if rep_dp.is_dir()]):
+            ty_csv_fp = rep_dp / "results" / "y.csv"
+            ty_df = pd.read_csv(ty_csv_fp)
+            F0 = ty_df["y"].iloc[:5].mean()
+            dF = ty_df["y"] - F0
+            ty_df["y"] = dF / F0
+            for g, [t1, t2] in enumerate(tspans):
+                y = ty_df.loc[(ty_df["t"] >= t1) & (ty_df["t"] < t2)]["y"].mean()
+                cgry = {"class": c, "group": g, "repeat": r, "response": y}
+                data.append(cgry)
+    df = pd.DataFrame(data)
     sigdiff_cgs = [
         [[0, 0], [0, 1]],
         [[0, 1], [0, 2]],
@@ -122,79 +132,134 @@ def main():
     ]
     palette = ["#34495E", "#EA822C", "#8069EC"]
     ylabel = r"$\mathbf{Ave\ \Delta F/F_{0}}$"
-    plot_rcgy(fig_fp, aves_df, xlabel="", ylabel=ylabel, group_labels=group_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16))
+    plot_cgry(fig_fp, df, xlabel="", ylabel=ylabel, group_labels=group_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16))
 
-    ## Figure 3B ##
-    fig_fp = "/home/phuong/data/phd-project/figures/fig_3b.png"
-    y_csv_fp = "/home/phuong/data/phd-project/2--expression/0--HEK-BL-intensity/results/y.csv"
-    rcgy_df = pd.read_csv(y_csv_fp)
-    norm_df = calc_log2_norm(rcgy_df)
+    ## Figure S1B ##
+    fig_fp = "/home/phuong/data/phd-project/figures/fig_s1b.png"
+    expt_dp = "/home/phuong/data/phd-project/1--biosensor/2--intensity/"
+    data = []
+    for g, group_dp in enumerate([group_dp for group_dp in natsorted(Path(expt_dp).glob("*")) if group_dp.is_dir()]):
+        for r, rep_dp in enumerate([rep_dp for rep_dp in natsorted(group_dp.glob("*")) if rep_dp.is_dir()]):
+            ty_csv_fp = rep_dp / "results" / "y.csv"
+            ty_df = pd.read_csv(ty_csv_fp)
+            F0 = ty_df["y"].iloc[:5].mean()
+            dF = ty_df["y"] - F0
+            ty_df["y"] = dF / F0
+            y = ty_df["y"].min()
+            cgry = {"class": 0, "group": g, "repeat": r, "response": y}
+            data.append(cgry)
+    df = pd.DataFrame(data)
     sigdiff_cgs = [
-        [[1, 1], [1, 2]],
-        [[1, 2], [1, 3]],
-        [[1, 3], [1, 4]],
+        [[0, 0], [0, 1]],
+        [[0, 0], [0, 2]],
     ]
-    group_labels = ["0", "1", "5", "10", "50"]
-    class_labels = ["Reporter Only", "Dense-RFP"]
-    palette = ["#34495E", "#8069EC"]
+    group_labels = ["20", "200", "2000"]
+    palette = ["#2ECC71", "#F1C40F", "#EA822C"]
+    ylabel = r"$\mathbf{Ave\ \Delta F/F_{0}}$"
     xlabel = r"$\mathdefault{Input\ Intensity\ (\mu W/mm^2)}$"
-    ylabel = r"$\mathdefault{Log_2\ Norm.\ Output}$"
-    leg_loc = "upper left"
-    plot_rcgy(fig_fp, norm_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
+    plot_cgry(fig_fp, df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16))
 
-    ## Figure 3C ##
-    fig_fp = "/home/phuong/data/phd-project/figures/fig_3c.png"
-    y_csv_fp = "/home/phuong/data/phd-project/2--expression/1--HEK-FM_single/results/y.csv"
-    rcgy_df = pd.read_csv(y_csv_fp)
-    norm_df = calc_log2_norm(rcgy_df)
+    ## Figure S1D ##
+    fig_fp = "/home/phuong/data/phd-project/figures/fig_s1d.png"
+    expt_dp = "/home/phuong/data/phd-project/1--biosensor/4--linker/"
+    data = []
+    for c, class_dp in enumerate([class_dp for class_dp in natsorted(Path(expt_dp).glob("*")) if class_dp.is_dir()]):
+        for g, group_dp in enumerate([group_dp for group_dp in natsorted(class_dp.glob("*")) if group_dp.is_dir()]):
+            for r, rep_dp in enumerate([rep_dp for rep_dp in natsorted(group_dp.glob("*")) if rep_dp.is_dir()]):
+                ty_csv_fp = rep_dp / "results" / "y.csv"
+                ty_df = pd.read_csv(ty_csv_fp)
+                F0 = ty_df["y"].iloc[:5].mean()
+                dF = ty_df["y"] - F0
+                ty_df["y"] = dF / F0
+                y = ty_df["y"].max()
+                cgry = {"class": c, "group": g, "repeat": r, "response": y}
+                data.append(cgry)
+    df = pd.DataFrame(data)
     sigdiff_cgs = [
-        [[0, 3], [1, 3]],
-        [[0, 5], [1, 5]],
-    ]
-    group_labels = ["0", "0.05", "0.1", "0.25", "0.5", "1"]
-    class_labels = ["Dense-RFP", "Sparse-RFP"]
-    palette = ["#8069EC", "#EA822C"]
-    xlabel = r"$\mathdefault{Input\ Pulse\ Freq.\ (Hz)}$"
-    ylabel = r"$\mathdefault{Log_2\ Norm.\ Output}$"
-    leg_loc = "upper left"
-    plot_rcgy(fig_fp, norm_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
-
-    ## Figure 3E ##
-    fig_fp = "/home/phuong/data/phd-project/figures/fig_3e.png"
-    y_csv_fp = "/home/phuong/data/phd-project/2--expression/2--HEK-FM_dual/results/y.csv"
-    rcgy_df = pd.read_csv(y_csv_fp)
-    norm_df = calc_log2_norm(rcgy_df)
-    sigdiff_cgs = [
+        [[0, 0], [1, 0]],
         [[0, 1], [1, 1]],
-        [[0, 2], [1, 2]],
     ]
-    group_labels = ["None\nInput", "Sparse\nInput", "Dense\nInput"]
-    class_labels = ["Dense-YFP", "Sparse-RFP"]
-    palette = ["#8069EC", "#EA822C"]
-    xlabel = ""
-    ylabel = r"$\mathdefault{Log_2\ Norm.\ Output}$"
-    leg_loc = "upper left"
-    plot_rcgy(fig_fp, norm_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
-
-    ## Figure 4C ##
-    fig_fp = "/home/phuong/data/phd-project/figures/fig_4c.png"
-    y_csv_fp = "/home/phuong/data/phd-project/3--antigen/1--CAR-killing-assay/y.csv"
-    rcgy_df = pd.read_csv(y_csv_fp)
-    sigdiff_cgs = [
-        [[0, 1], [1, 1]],
-        [[0, 2], [1, 2]],
-    ]
+    class_labels = ["13 AA Linker", "20 AA Linker"]
     group_labels = [
-        "None\nInput",
-        "Sparse\nInput",
-        "Dense\nInput",
+        "iLIDfast",
+        "iLIDslow",
     ]
-    class_labels = ["Dense-CD19", "Sparse-PSMA"]
-    palette = ["#8069EC", "#EA822C"]
+    palette = ["#2ECC71", "#EA822C"]
+    ylabel = r"$\mathbf{Ave\ \Delta F/F_{0}}$"
     xlabel = ""
-    ylabel = "% Cytotoxicity"
-    leg_loc = "upper left"
-    plot_rcgy(fig_fp, rcgy_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
+    plot_cgry(fig_fp, df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, leg_loc="upper right", figsize=(24, 16))
+
+    # ## Figure 3B ##
+    # fig_fp = "/home/phuong/data/phd-project/figures/fig_3b.png"
+    # y_csv_fp = "/home/phuong/data/phd-project/2--expression/0--HEK-BL-intensity/results/y.csv"
+    # rcgy_df = pd.read_csv(y_csv_fp)
+    # norm_df = calc_log2_norm(rcgy_df)
+    # sigdiff_cgs = [
+    #     [[1, 1], [1, 2]],
+    #     [[1, 2], [1, 3]],
+    #     [[1, 3], [1, 4]],
+    # ]
+    # group_labels = ["0", "1", "5", "10", "50"]
+    # class_labels = ["Reporter Only", "Dense-RFP"]
+    # palette = ["#34495E", "#8069EC"]
+    # xlabel = r"$\mathdefault{Input\ Intensity\ (\mu W/mm^2)}$"
+    # ylabel = r"$\mathdefault{Log_2\ Norm.\ Output}$"
+    # leg_loc = "upper left"
+    # plot_cgry(fig_fp, norm_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
+
+    # ## Figure 3C ##
+    # fig_fp = "/home/phuong/data/phd-project/figures/fig_3c.png"
+    # y_csv_fp = "/home/phuong/data/phd-project/2--expression/1--HEK-FM_single/results/y.csv"
+    # rcgy_df = pd.read_csv(y_csv_fp)
+    # norm_df = calc_log2_norm(rcgy_df)
+    # sigdiff_cgs = [
+    #     [[0, 3], [1, 3]],
+    #     [[0, 5], [1, 5]],
+    # ]
+    # group_labels = ["0", "0.05", "0.1", "0.25", "0.5", "1"]
+    # class_labels = ["Dense-RFP", "Sparse-RFP"]
+    # palette = ["#8069EC", "#EA822C"]
+    # xlabel = r"$\mathdefault{Input\ Pulse\ Freq.\ (Hz)}$"
+    # ylabel = r"$\mathdefault{Log_2\ Norm.\ Output}$"
+    # leg_loc = "upper left"
+    # plot_cgry(fig_fp, norm_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
+
+    # ## Figure 3E ##
+    # fig_fp = "/home/phuong/data/phd-project/figures/fig_3e.png"
+    # y_csv_fp = "/home/phuong/data/phd-project/2--expression/2--HEK-FM_dual/results/y.csv"
+    # rcgy_df = pd.read_csv(y_csv_fp)
+    # norm_df = calc_log2_norm(rcgy_df)
+    # sigdiff_cgs = [
+    #     [[0, 1], [1, 1]],
+    #     [[0, 2], [1, 2]],
+    # ]
+    # group_labels = ["None\nInput", "Sparse\nInput", "Dense\nInput"]
+    # class_labels = ["Dense-YFP", "Sparse-RFP"]
+    # palette = ["#8069EC", "#EA822C"]
+    # xlabel = ""
+    # ylabel = r"$\mathdefault{Log_2\ Norm.\ Output}$"
+    # leg_loc = "upper left"
+    # plot_cgry(fig_fp, norm_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
+
+    # ## Figure 4C ##
+    # fig_fp = "/home/phuong/data/phd-project/figures/fig_4c.png"
+    # y_csv_fp = "/home/phuong/data/phd-project/3--antigen/1--CAR-killing-assay/y.csv"
+    # rcgy_df = pd.read_csv(y_csv_fp)
+    # sigdiff_cgs = [
+    #     [[0, 1], [1, 1]],
+    #     [[0, 2], [1, 2]],
+    # ]
+    # group_labels = [
+    #     "None\nInput",
+    #     "Sparse\nInput",
+    #     "Dense\nInput",
+    # ]
+    # class_labels = ["Dense-CD19", "Sparse-PSMA"]
+    # palette = ["#8069EC", "#EA822C"]
+    # xlabel = ""
+    # ylabel = "% Cytotoxicity"
+    # leg_loc = "upper left"
+    # plot_cgry(fig_fp, rcgy_df, xlabel=xlabel, ylabel=ylabel, group_labels=group_labels, class_labels=class_labels, sigdiff_cgs=sigdiff_cgs, palette=palette, figsize=(24, 16), leg_loc=leg_loc)
 
 
 if __name__ == "__main__":
