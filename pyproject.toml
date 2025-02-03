@@ -32,7 +32,7 @@ Repository = "https://github.com/phuongho43/ezplot"
 
 [project.scripts]
 plot_dynamics = "ezplot.plot_dynamics:main"
-plot_groups = "ezplot.plot_groups:main"
+plot_multiwell = "ezplot.plot_multiwell:main"
 plot_cytometry = "ezplot.plot_cytometry:main"
 
 [dependency-groups]
