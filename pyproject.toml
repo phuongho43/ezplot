@@ -31,9 +31,9 @@ dependencies = [
 Repository = "https://github.com/phuongho43/ezplot"
 
 [project.scripts]
-plot_dynamics = "ezplot.plot_dynamics:main"
-plot_multiwell = "ezplot.plot_multiwell:main"
-plot_cytometry = "ezplot.plot_cytometry:main"
+plot_timeseries = "ezplot.plot_timeseries:main"
+plot_categoricals = "ezplot.plot_categoricals:main"
+plot_distributions = "ezplot.plot_distributions:main"
 
 [dependency-groups]
 dev = [

@@ -218,8 +218,8 @@ def main():
     palette = ["#EA822C"]
     plot_crty(fig_fp, crty_df, class_labels, xlabel=xlabel, ylabel=ylabel, tu_df=tu_df, leg_loc="lower left", palette=palette)
 
-    ## Figure 4F ##
-    fig_fp = "/home/phuong/data/phd-project/figures/fig_4f.png"
+    ## Figure 5F ##
+    fig_fp = "/home/phuong/data/phd-project/figures/fig_5f.png"
     cty_df = pd.read_csv("/home/phuong/data/phd-project/4--antigen/2--CAR-bilateral-tumor/y.csv")
     class_labels = [
         "Dense-CD19 (Dense Input)",
@@ -232,6 +232,8 @@ def main():
     ylabel = "Total Flux (p/s)"
     palette = ["#8069EC", "#a67750", "#6c6296", "#EA822C"]
     plot_crty(fig_fp, cty_df, class_labels, xlabel=xlabel, ylabel=ylabel, tu_df=tu_df, figsize=(24, 16), palette=palette)
+
+    print("\a")
 
 
 if __name__ == "__main__":
