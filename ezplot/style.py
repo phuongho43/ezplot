@@ -1,7 +1,7 @@
 PALETTE = ["#8069EC", "#EA822C", "#2ECC71", "#D143A4", "#F1C40F", "#34495E", "#648FFF"]
 
 STYLE = {
-    "figure.figsize": (24, 20),
+    "figure.figsize": (24, 16),
     "lines.linewidth": 16,
     "lines.markersize": 24,
     "lines.markeredgecolor": "#212121",
@@ -28,10 +28,10 @@ STYLE = {
     "ytick.major.size": 36,
     "xtick.major.width": 12,
     "ytick.major.width": 12,
-    "xtick.minor.size": 12,
-    "ytick.minor.size": 12,
-    "xtick.minor.width": 4,
-    "ytick.minor.width": 4,
+    "xtick.minor.size": 18,
+    "ytick.minor.size": 18,
+    "xtick.minor.width": 6,
+    "ytick.minor.width": 6,
     "legend.fontsize": 64,
     "legend.handletextpad": 0.4,
     "legend.labelspacing": 0.4,

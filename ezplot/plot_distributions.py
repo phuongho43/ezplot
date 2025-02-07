@@ -62,7 +62,7 @@ def load_fcs(fcs_fp, channel=None):
     return data
 
 
-def analyze_cgry_fc_data(expt_dp, load_fnc, load_fnc_kwargs=None):
+def prep_fc_data(expt_dp, load_fnc, file_ext=".fcs", load_fnc_kwargs=None):
     df = []
     for c, class_dp in enumerate([dp for dp in natsorted(Path(expt_dp).glob("*")) if dp.is_dir()]):
         for g, group_dp in enumerate([dp for dp in natsorted(class_dp.glob("*")) if dp.is_dir()]):
@@ -82,7 +82,7 @@ def main():
     ## Figure 5B ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_5b.png"
     expt_dp = "/home/phuong/data/phd-project/4--antigen/0--K562-fc-staining/"
-    cgry_df = analyze_cgry_fc_data(expt_dp, load_fnc=load_fcs, load_fnc_kwargs={"channel": "FL4_A"})
+    cgry_df = prep_fc_data(expt_dp, load_fnc=load_fcs, load_fnc_kwargs={"channel": "FL4_A"})
     group_labels = [
         "Plain K562",
         "Constitutive\nExpression",

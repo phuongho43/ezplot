@@ -8,6 +8,7 @@ import scipy as sp
 import seaborn as sns
 from natsort import natsorted
 
+from ezplot.plot_numericals import calc_dF_F0
 from ezplot.style import PALETTE, STYLE
 
 
@@ -45,7 +46,7 @@ def draw_sigdiff(ax, df, cg1, cg2, sy):
         va = "bottom"
     bar_x = [x1, x1, x2, x2]
     bar_y = [y, y + dy / 2, y + dy / 2, y]
-    ax.plot(bar_x, bar_y, color="#212121", lw=8, zorder=10.1)
+    ax.plot(bar_x, bar_y, color="#212121", lw=STYLE["axes.linewidth"], zorder=10.1)
     ax.text(xm, y + dy / 2, text, fontsize=fontsize, ha="center", va=va, zorder=10.2)
 
 
@@ -86,7 +87,7 @@ def plot_cgry(fig_fp, cgry_df, xlabel, ylabel, group_labels, class_labels=None, 
             palette="dark:#212121",
             markers=".",
             markersize=rc_params["lines.markersize"],
-            err_kws={"linewidth": 10},
+            err_kws={"linewidth": rc_params["axes.linewidth"]},
             ls="",
             capsize=0.2,
             zorder=2.2,
@@ -110,12 +111,12 @@ def plot_cgry(fig_fp, cgry_df, xlabel, ylabel, group_labels, class_labels=None, 
 def calc_log2_norm(cgry_df):
     for c in cgry_df["class"].unique():
         for r in cgry_df["repeat"].unique():
-            y = cgry_df.loc[(cgry_df["class"] == c) & (cgry_df["repeat"] == r), ["group", "response"]]
+            y = cgry_df.loc[(cgry_df["class"] == c) & (cgry_df["repeat"] == r), "response"]
             cgry_df.loc[(cgry_df["class"] == c) & (cgry_df["repeat"] == r), "response"] = np.log2(y / y.iloc[0])
     return cgry_df
 
 
-def analyze_cgry_data(expt_dp):
+def prep_cgry_data(expt_dp):
     df = []
     for c, class_dp in enumerate([dp for dp in natsorted(Path(expt_dp).glob("*")) if dp.is_dir()]):
         for g, group_dp in enumerate([dp for dp in natsorted(class_dp.glob("*")) if dp.is_dir()]):
@@ -137,9 +138,7 @@ def main():
         for r, rep_dp in enumerate([rep_dp for rep_dp in natsorted(group_dp.glob("*")) if rep_dp.is_dir()]):
             ty_csv_fp = rep_dp / "results" / "y.csv"
             ty_df = pd.read_csv(ty_csv_fp)
-            F0 = ty_df["y"].iloc[:5].mean()
-            dF = ty_df["y"] - F0
-            ty_df["y"] = dF / F0
+            ty_df = calc_dF_F0(ty_df)
             y = ty_df["y"].min()
             cgry = {"class": 0, "group": g, "repeat": r, "response": y}
             data.append(cgry)
@@ -161,9 +160,7 @@ def main():
         for r, rep_dp in enumerate([rep_dp for rep_dp in natsorted(group_dp.glob("*")) if rep_dp.is_dir()]):
             ty_csv_fp = rep_dp / "results" / "y.csv"
             ty_df = pd.read_csv(ty_csv_fp)
-            F0 = ty_df["y"].iloc[:5].mean()
-            dF = ty_df["y"] - F0
-            ty_df["y"] = dF / F0
+            ty_df = calc_dF_F0(ty_df)
             y = ty_df["y"].max()
             cgry = {"class": 0, "group": g, "repeat": r, "response": y}
             data.append(cgry)
@@ -189,9 +186,7 @@ def main():
         for r, rep_dp in enumerate([rep_dp for rep_dp in natsorted(class_dp.glob("*")) if rep_dp.is_dir()]):
             ty_csv_fp = rep_dp / "results" / "y.csv"
             ty_df = pd.read_csv(ty_csv_fp)
-            F0 = ty_df["y"].iloc[:5].mean()
-            dF = ty_df["y"] - F0
-            ty_df["y"] = dF / F0
+            ty_df = calc_dF_F0(ty_df)
             for g, [t1, t2] in enumerate(tspans):
                 y = ty_df.loc[(ty_df["t"] >= t1) & (ty_df["t"] < t2)]["y"].mean()
                 cgry = {"class": c, "group": g, "repeat": r, "response": y}
@@ -213,7 +208,7 @@ def main():
     ## Figure 4B ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_4b.png"
     expt_dp = "/home/phuong/data/phd-project/3--expression/0--293T-intensity/"
-    df = analyze_cgry_data(expt_dp)
+    df = prep_cgry_data(expt_dp)
     df = calc_log2_norm(df)
     signi_bar = [
         [[1, 1], [1, 2], 1],
@@ -231,7 +226,7 @@ def main():
     ## Figure 4C ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_4c.png"
     expt_dp = "/home/phuong/data/phd-project/3--expression/1--293T-FM-single/"
-    df = analyze_cgry_data(expt_dp)
+    df = prep_cgry_data(expt_dp)
     df = calc_log2_norm(df)
     signi_bar = [
         [[0, 3], [1, 3], 1],
@@ -248,7 +243,7 @@ def main():
     ## Figure 4D ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_4d.png"
     expt_dp = "/home/phuong/data/phd-project/3--expression/2--293T-iLID-vs-LOV/"
-    df = analyze_cgry_data(expt_dp)
+    df = prep_cgry_data(expt_dp)
     df = calc_log2_norm(df)
     signi_bar = [
         [[1, 0], [1, 1], 1],
@@ -266,7 +261,7 @@ def main():
     ## Figure 4E ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_4e.png"
     expt_dp = "/home/phuong/data/phd-project/3--expression/3--293T-FM-dual/"
-    df = analyze_cgry_data(expt_dp)
+    df = prep_cgry_data(expt_dp)
     df = calc_log2_norm(df)
     signi_bar = [
         [[0, 1], [1, 1], 1],
@@ -283,7 +278,7 @@ def main():
     ## Figure S3 ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_s3.png"
     expt_dp = "/home/phuong/data/phd-project/3--expression/4--K562-FM-single/"
-    df = analyze_cgry_data(expt_dp)
+    df = prep_cgry_data(expt_dp)
     df = calc_log2_norm(df)
     signi_bar = [
         [[0, 3], [1, 3], 1],

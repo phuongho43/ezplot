@@ -31,7 +31,7 @@ dependencies = [
 Repository = "https://github.com/phuongho43/ezplot"
 
 [project.scripts]
-plot_timeseries = "ezplot.plot_timeseries:main"
+plot_numericals = "ezplot.plot_numericals:main"
 plot_categoricals = "ezplot.plot_categoricals:main"
 plot_distributions = "ezplot.plot_distributions:main"
 
@@ -67,7 +67,7 @@ testpaths = ["tests"]
 
 [tool.ruff]
 target-version = "py39"
-line-length = 200
+line-length = 250
 fix = true
 
 [tool.ruff.lint]
