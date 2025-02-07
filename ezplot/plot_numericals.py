@@ -236,32 +236,6 @@ def main():
     palette = ["#8069EC", "#EA822C"]
     plot_crty(fig_fp, crty_df, class_labels, xlabel=xlabel, ylabel=ylabel, figsize=(24, 20), lsizes=lsizes, ylim=ylim, xlog=True, leg_loc="upper left", palette=palette)
 
-    ## Plot Each Rep ##
-    class_dps = [
-        "/home/phuong/data/phd-project/1--biosensor/0--ddFP/",
-        "/home/phuong/data/phd-project/1--biosensor/1--LOV/0--I427V/",
-        "/home/phuong/data/phd-project/1--biosensor/1--LOV/1--V416I/",
-        "/home/phuong/data/phd-project/1--biosensor/2--intensity/0--LOVfast-BL20uW/",
-        "/home/phuong/data/phd-project/1--biosensor/2--intensity/1--LOVfast-BL200uW/",
-        "/home/phuong/data/phd-project/1--biosensor/3--iLID/0--I427V/",
-        "/home/phuong/data/phd-project/1--biosensor/3--iLID/1--V416I/",
-        "/home/phuong/data/phd-project/1--biosensor/4--linker/0--iLIDslow-13AA/",
-        "/home/phuong/data/phd-project/1--biosensor/4--linker/1--iLIDslow-20AA/",
-        "/home/phuong/data/phd-project/1--biosensor/5--decoder/0--sparse-ddFP/",
-    ]
-    for class_dp in [Path(dp) for dp in class_dps]:
-        for rep_dp in [dp for dp in natsorted(class_dp.glob("*")) if dp.is_dir()]:
-            y_csv_fp = rep_dp / "results" / "y.csv"
-            ty_df = pd.read_csv(y_csv_fp)
-            ty_df = calc_dF_F0(ty_df)
-            ty_df["c"] = np.zeros(len(ty_df), dtype=int)
-            class_labels = ["y"]
-            xlabel = "Time (s)"
-            ylabel = r"$\mathbf{\Delta F/F_{0}}$"
-            palette = ["#8069EC"]
-            fig_fp = rep_dp / "results" / "y.png"
-            plot_crty(fig_fp, ty_df, class_labels, xlabel=xlabel, ylabel=ylabel, tu_df=None, palette=palette)
-
     ## Figure 2C ##
     fig_fp = "/home/phuong/data/phd-project/figures/fig_2c.png"
     class_dps = [
